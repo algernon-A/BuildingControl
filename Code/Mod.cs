@@ -5,6 +5,7 @@
 
 namespace BuildingControl
 {
+    using AlgernonCommons;
     using AlgernonCommons.Patching;
     using AlgernonCommons.Translation;
     using ICities;
@@ -37,6 +38,12 @@ namespace BuildingControl
         /// <summary>
         /// Loads settings file.
         /// </summary>
-        public override void LoadSettings() => ModSettings.Load();
+        public override void LoadSettings()
+        {
+            ModSettings.Load();
+
+            // Enable detailed logging.
+            Logging.DetailLogging = true;
+        }
     }
 }
