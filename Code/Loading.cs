@@ -7,7 +7,6 @@ namespace BuildingControl
 {
     using System.Collections.Generic;
     using AlgernonCommons.Patching;
-    using AlgernonCommons.UI;
     using ICities;
 
     /// <summary>
@@ -31,21 +30,6 @@ namespace BuildingControl
 
             // Initialise building data.
             BuildingData.Instance = new BuildingData();
-        }
-
-        /// <summary>
-        /// Performs any actions upon successful level loading completion.
-        /// </summary>
-        /// <param name="mode">Loading mode (e.g. game, editor, scenario, etc.).</param>
-        protected override void LoadedActions(LoadMode mode)
-        {
-            base.LoadedActions(mode);
-
-            // Add status panel.
-            if (ButtonPanel.ShowButtons)
-            {
-                StandalonePanelManager<ButtonPanel>.Create();
-            }
         }
     }
 }

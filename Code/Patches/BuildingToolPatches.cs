@@ -6,6 +6,7 @@
 namespace BuildingControl.Patches
 {
     using System;
+    using AlgernonCommons.UI;
     using HarmonyLib;
     using UnityEngine;
 
@@ -31,6 +32,28 @@ namespace BuildingControl.Patches
             {
                 BuildingData.Instance.SetBuildingSetting(__result);
             }
+        }
+
+
+        /// <summary>
+        /// Harmony Prefix patch to BuildingTool.OnEnable to unapply zoning creation patches when the building tool is activated.
+        /// </summary>
+        [HarmonyPatch("OnEnable")]
+        [HarmonyPrefix]
+        public static void OnEnable()
+        {
+            AlgernonCommons.Logging.KeyMessage("CAT!");
+            StandalonePanelManager<ControlPanel>.Create();
+        }
+
+        /// <summary>
+        /// Harmony Prefix patch to BuildingTool.OnEnable to reappky zoning creation patches when the building tool is activated.
+        /// </summary>
+        [HarmonyPatch("OnDisable")]
+        [HarmonyPrefix]
+        public static void OnDisable()
+        {
+            StandalonePanelManager<ControlPanel>.Panel?.Close();
         }
     }
 }
