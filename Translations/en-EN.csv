@@ -20,3 +20,4 @@
 "FLATTEN_OFF","No flattening","Terrain flattening override menu item"
 "FLATTEN_BUILDING","Flatten building base","Terrain flattening override menu item"
 "FLATTEN_ALL","Flatten entire block","Terrain flattening override menu item"
+"RESET_POS","Reset button position","Button in options panel."

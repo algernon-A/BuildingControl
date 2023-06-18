@@ -13,10 +13,10 @@ namespace BuildingControl
     /// <summary>
     /// Control button panel.
     /// </summary>
-    internal class ControlPanel : StandalonePanelBase
+    internal class ControlPanel : StandalonePanel
     {
         // Layout constants.
-        private const float TitleHeight = 20f;
+        private const float TitleHeight = 30f;
         private const float LabelHeight = 15f;
         private const float DropDownHeight = 25f;
         private const float ControlWidth = 200f;
@@ -72,20 +72,17 @@ namespace BuildingControl
         public override float PanelHeight => CalculatedPanelHeight;
 
         /// <summary>
+        /// Gets the panel's title.
+        /// </summary>
+        protected override string PanelTitle => Translations.Translate("MOD_NAME");
+
+        /// <summary>
         /// Called by Unity before the first frame.
         /// Used to perform setup.
         /// </summary>
         public override void Start()
         {
             base.Start();
-
-            // Appearance.
-            atlas = UITextures.InGameAtlas;
-            backgroundSprite = "UnlockingPanel2";
-            opacity = 1.0f;
-
-            // Title.
-            UILabels.AddLabel(this, Margin, Margin, Translations.Translate("MOD_NAME"), width: ControlWidth, alignment: UIHorizontalAlignment.Center);
 
             // Placement mode dropdown.
             UILabels.AddLabel(this, Margin, PlacementLabelY, Translations.Translate("PLACEMENT"), textScale: 0.8f);

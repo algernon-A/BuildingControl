@@ -7,6 +7,7 @@ namespace BuildingControl
 {
     using System.IO;
     using System.Xml.Serialization;
+    using AlgernonCommons.UI;
     using AlgernonCommons.XML;
 
     /// <summary>
@@ -26,6 +27,18 @@ namespace BuildingControl
         // Full userdir settings file name.
         [XmlIgnore]
         private static readonly string SettingsFile = Path.Combine(UserSettingsDir, SettingsFileName);
+
+        /// <summary>
+        /// Gets or sets the panel's saved X-position.
+        /// </summary>
+        [XmlElement("ControlPanelX")]
+        public float ControlPanelX { get => StandalonePanelManager<ControlPanel>.LastSavedXPosition; set => StandalonePanelManager<ControlPanel>.LastSavedXPosition = value; }
+
+        /// <summary>
+        /// Gets or sets the panel's saved Y-position.
+        /// </summary>
+        [XmlElement("ControlPanelY")]
+        public float ControlPanelY { get => StandalonePanelManager<ControlPanel>.LastSavedYPosition; set => StandalonePanelManager<ControlPanel>.LastSavedYPosition = value; }
 
         /// <summary>
         /// Loads settings from file.

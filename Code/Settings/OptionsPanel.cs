@@ -33,6 +33,12 @@ namespace BuildingControl
                 Translations.Index = index;
                 OptionsPanelManager<OptionsPanel>.LocaleChanged();
             };
+            currentY += languageDropDown.parent.height + Margin;
+
+            // Reset position button.
+            UIButton resetPositionButton = UIButtons.AddButton(this, LeftMargin, currentY, Translations.Translate("RESET_POS"), 300f);
+            resetPositionButton.eventClicked += (c, p) => StandalonePanelManager<ControlPanel>.ResetPosition();
+            currentY += resetPositionButton.height + 20f;
         }
     }
 }
