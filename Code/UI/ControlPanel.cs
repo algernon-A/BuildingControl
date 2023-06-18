@@ -87,8 +87,17 @@ namespace BuildingControl
             // Placement mode dropdown.
             UILabels.AddLabel(this, Margin, PlacementLabelY, Translations.Translate("PLACEMENT"), textScale: 0.8f);
             UIDropDown placementDropDown = UIDropDowns.AddDropDown(this, Margin, PlacementMenuY, ControlWidth);
+            placementDropDown.BringToFront();
             placementDropDown.items = _placementModeNames;
-            placementDropDown.selectedIndex = 0;
+            if (BuildingData.Instance.OverridePlacement)
+            {
+                placementDropDown.selectedIndex = (int)BuildingData.Instance.Placement + 1;
+            }
+            else
+            {
+                placementDropDown.selectedIndex = 0;
+            }
+
             placementDropDown.eventSelectedIndexChanged += (c, index) =>
             {
                 BuildingData.Instance.OverridePlacement = index != 0;
@@ -98,8 +107,9 @@ namespace BuildingControl
             // Surface texture dropdown.
             UILabels.AddLabel(this, Margin, SurfaceLabelY, Translations.Translate("SURFACE"), textScale: 0.8f);
             UIDropDown surfaceDropDown = UIDropDowns.AddDropDown(this, Margin, SurfaceMenuY, ControlWidth);
+            surfaceDropDown.BringToFront();
             surfaceDropDown.items = _surfaceModeNames;
-            surfaceDropDown.selectedIndex = 0;
+            surfaceDropDown.selectedIndex = (int)BuildingData.Instance.SurfaceTexture;
             surfaceDropDown.eventSelectedIndexChanged += (c, index) =>
             {
                 BuildingData.Instance.SurfaceTexture = (BuildingRecord.SurfaceTexture)index;
@@ -108,8 +118,9 @@ namespace BuildingControl
             // Terrain flattening dropdown.
             UILabels.AddLabel(this, Margin, TerrainLabelY, Translations.Translate("FLATTEN"), textScale: 0.8f);
             UIDropDown terrainDropDown = UIDropDowns.AddDropDown(this, Margin, TerrainMenuY, ControlWidth);
+            terrainDropDown.BringToFront();
             terrainDropDown.items = _terrainModeNames;
-            terrainDropDown.selectedIndex = 0;
+            terrainDropDown.selectedIndex = (int)BuildingData.Instance.TerrainMode;
             terrainDropDown.eventSelectedIndexChanged += (c, index) =>
             {
                 BuildingData.Instance.TerrainMode = (BuildingRecord.TerrainMode)index;
