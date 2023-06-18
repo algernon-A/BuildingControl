@@ -18,6 +18,26 @@ namespace BuildingControl.Patches
     internal static class BuildingToolPatches
     {
         /// <summary>
+        /// Harmony Prefix patch to BuildingTool.OnEnable to unapply zoning creation patches when the building tool is activated.
+        /// </summary>
+        [HarmonyPatch("OnEnable")]
+        [HarmonyPrefix]
+        public static void OnEnable()
+        {
+            StandalonePanelManager<ControlPanel>.Create();
+        }
+
+        /// <summary>
+        /// Harmony Prefix patch to BuildingTool.OnEnable to reappky zoning creation patches when the building tool is activated.
+        /// </summary>
+        [HarmonyPatch("OnDisable")]
+        [HarmonyPrefix]
+        public static void OnDisable()
+        {
+            StandalonePanelManager<ControlPanel>.Panel?.Close();
+        }
+
+        /// <summary>
         /// Harmony postfix for BuildingManager.CreateBuilding apply current building settings when a building is created.
         /// </summary>
         /// <param name="__result">Method result (building ID).</param>
@@ -32,28 +52,6 @@ namespace BuildingControl.Patches
             {
                 BuildingData.Instance.SetBuildingSetting(__result);
             }
-        }
-
-
-        /// <summary>
-        /// Harmony Prefix patch to BuildingTool.OnEnable to unapply zoning creation patches when the building tool is activated.
-        /// </summary>
-        [HarmonyPatch("OnEnable")]
-        [HarmonyPrefix]
-        public static void OnEnable()
-        {
-            AlgernonCommons.Logging.KeyMessage("CAT!");
-            StandalonePanelManager<ControlPanel>.Create();
-        }
-
-        /// <summary>
-        /// Harmony Prefix patch to BuildingTool.OnEnable to reappky zoning creation patches when the building tool is activated.
-        /// </summary>
-        [HarmonyPatch("OnDisable")]
-        [HarmonyPrefix]
-        public static void OnDisable()
-        {
-            StandalonePanelManager<ControlPanel>.Panel?.Close();
         }
     }
 }
