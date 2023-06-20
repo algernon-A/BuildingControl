@@ -1,7 +1,7 @@
 "LANGUAGE","English","Language name (in native language)."
 "MOD_NAME","Building Control","Mod name, used for in-game UI."
 "MOD_DESCRIPTION","Building anarchy and other functions","Mod description, visibile in content manager."
-"PLACEMENT","Placement mode","Dropdown menu label in control panel
+"PLACEMENT","Placement mode","Dropdown menu label in control panel"
 "SURFACE","Surface texture","Dropdown menu label in control panel"
 "FLATTEN","Terrain flattening","Dropdown menu label in control panel"
 "DEFAULT","Asset default","Placement mode menu item"
