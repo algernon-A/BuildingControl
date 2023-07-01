@@ -179,7 +179,7 @@ namespace BuildingControl.Patches
             {
                 default:
                 case BuildingRecord.SurfaceTexture.Default:
-                    return buildingInfo.m_fullGravel;
+                    return buildingInfo.m_fullPavement;
                 case BuildingRecord.SurfaceTexture.Pavement:
                     return true;
                 case BuildingRecord.SurfaceTexture.None:
