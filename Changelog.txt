@@ -1,3 +1,6 @@
+- Add full serialization of individual building settings
+
+
 Version 1.0.1 hotfix -
 
 - Fix pavement surfaces being hidden by default

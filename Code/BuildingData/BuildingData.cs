@@ -6,6 +6,9 @@
 namespace BuildingControl
 {
     using System.Collections.Generic;
+    using AlgernonCommons;
+    using ColossalFramework.IO;
+    using static BuildingRecord;
 
     /// <summary>
     /// Class to manage building data records.
@@ -33,12 +36,12 @@ namespace BuildingControl
         /// <summary>
         /// Gets or sets the current surface texture override.
         /// </summary>
-        internal BuildingRecord.SurfaceTexture SurfaceTexture { get; set; } = BuildingRecord.SurfaceTexture.Default;
+        internal SurfaceTexture SurfaceTexture { get; set; } = SurfaceTexture.Default;
 
         /// <summary>
         /// Gets or sets the current terrain mode override.
         /// </summary>
-        internal BuildingRecord.TerrainMode TerrainMode { get; set; } = BuildingRecord.TerrainMode.Default;
+        internal TerrainMode TerrainMode { get; set; } = TerrainMode.Default;
 
         /// <summary>
         /// Sets the record for the given building to the current override values.
@@ -47,16 +50,12 @@ namespace BuildingControl
         internal void SetBuildingSetting(ushort buildingID)
         {
             // Ignore default settings.
-            if (!OverridePlacement && SurfaceTexture == BuildingRecord.SurfaceTexture.Default && TerrainMode == BuildingRecord.TerrainMode.Default)
+            if (!OverridePlacement && SurfaceTexture == SurfaceTexture.Default && TerrainMode == TerrainMode.Default)
             {
-                AlgernonCommons.Logging.Message("no settings for building ", buildingID);
-
                 // Default setting - remove any existing record.
                 _buildingRecords.Remove(buildingID);
                 return;
             }
-
-            AlgernonCommons.Logging.Message("new settings for building ", buildingID);
 
             // Create new record and add to dictionary.
             BuildingRecord newRecord = new BuildingRecord
@@ -80,8 +79,8 @@ namespace BuildingControl
         /// Gets the terrain override for the given building.
         /// </summary>
         /// <param name="buildingID">Building ID.</param>
-        /// <returns>Terrain override (<see cref="BuildingRecord.TerrainMode.Default"/> if no active record exists).</returns>
-        internal BuildingRecord.TerrainMode GetTerrainMode(ushort buildingID)
+        /// <returns>Terrain override (<see cref="TerrainMode.Default"/> if no active record exists).</returns>
+        internal TerrainMode GetTerrainMode(ushort buildingID)
         {
             // Get stored building record.
             if (_buildingRecords.TryGetValue(buildingID, out BuildingRecord record))
@@ -90,15 +89,15 @@ namespace BuildingControl
             }
 
             // If we got here, no building record was found; return default.
-            return BuildingRecord.TerrainMode.Default;
+            return TerrainMode.Default;
         }
 
         /// <summary>
         /// Gets the surface override for the given building.
         /// </summary>
         /// <param name="buildingID">Building ID.</param>
-        /// <returns>Surface override (<see cref="BuildingRecord.SurfaceTexture.Default"/> if no active record exists).</returns>
-        internal BuildingRecord.SurfaceTexture GetSurfaceTexture(ushort buildingID)
+        /// <returns>Surface override (<see cref="SurfaceTexture.Default"/> if no active record exists).</returns>
+        internal SurfaceTexture GetSurfaceTexture(ushort buildingID)
         {
             // Get stored building record.
             if (_buildingRecords.TryGetValue(buildingID, out BuildingRecord record))
@@ -107,7 +106,57 @@ namespace BuildingControl
             }
 
             // If we got here, no building record was found; return default.
-            return BuildingRecord.SurfaceTexture.Default;
+            return SurfaceTexture.Default;
+        }
+
+        /// <summary>
+        /// Serialise to savegame.
+        /// </summary>
+        /// <param name="serializer">Data serializer.</param>
+        internal void Serialize(DataSerializer serializer)
+        {
+            // Write data length.
+            int dataLength = _buildingRecords.Count;
+            serializer.WriteInt32(dataLength);
+
+            // Serialize entries.
+            foreach (KeyValuePair<ushort, BuildingRecord> entry in _buildingRecords)
+            {
+                serializer.WriteUInt16(entry.Key);
+                serializer.WriteBool(entry.Value.OverridePlacementMode);
+                serializer.WriteInt32((int)entry.Value.PlacementMode);
+                serializer.WriteInt8((byte)entry.Value.SurfaceOverride);
+                serializer.WriteInt8((byte)entry.Value.TerrainOverride);
+            }
+
+            Logging.Message("wrote ", dataLength, " records");
+        }
+
+        /// <summary>
+        /// Deserialise from savegame.
+        /// </summary>
+        /// <param name="serializer">Data serializer.</param>
+        internal void Deserialize(DataSerializer serializer)
+        {
+            // Read data length.
+            int dataLength = serializer.ReadInt32();
+
+            // Deerialize entries.
+            _buildingRecords.Clear();
+            for (int i = 0; i < dataLength; ++i)
+            {
+                _buildingRecords.Add(
+                    (ushort)serializer.ReadUInt16(),
+                    new BuildingRecord
+                    {
+                        OverridePlacementMode = serializer.ReadBool(),
+                        PlacementMode = (BuildingInfo.PlacementMode)serializer.ReadInt32(),
+                        SurfaceOverride = (SurfaceTexture)serializer.ReadUInt8(),
+                        TerrainOverride = (TerrainMode)serializer.ReadUInt8(),
+                    });
+            }
+
+            Logging.Message("read ", dataLength, " records");
         }
     }
 }
