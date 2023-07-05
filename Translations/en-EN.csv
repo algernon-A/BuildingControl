@@ -1,4 +1,4 @@
-"LANGUAGE","English","Language name (in native language)."
+"LANGUAGE","English","Language name (in native language).  This means the NAME OF THE LANGUAGE BEING TRANSLATED INTO, and should NOT be a translation of the word 'English'"
 "MOD_NAME","Building Control","Mod name, used for in-game UI."
 "MOD_DESCRIPTION","Building anarchy and other functions","Mod description, visibile in content manager."
 "PLACEMENT","Placement mode","Dropdown menu label in control panel"
