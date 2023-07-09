@@ -6,7 +6,9 @@
 namespace BuildingControl
 {
     using System.Collections.Generic;
+    using System.IO;
     using AlgernonCommons;
+    using ColossalFramework;
     using ColossalFramework.IO;
     using static BuildingRecord;
 
@@ -15,13 +17,40 @@ namespace BuildingControl
     /// </summary>
     internal class BuildingData
     {
+        // Instance reference.
+        private static BuildingData s_instance;
+
         // Buildng data records.
         private readonly Dictionary<ushort, BuildingRecord> _buildingRecords = new Dictionary<ushort, BuildingRecord>();
 
+
         /// <summary>
-        /// Gets or sets the active instance.
+        /// Gets the active instance.
         /// </summary>
-        internal static BuildingData Instance { get; set; }
+        internal static BuildingData Instance
+        {
+            get
+            {
+                // Initialize new instance if one doesn't already exist.
+                if (s_instance == null)
+                {
+                    s_instance = new BuildingData();
+
+                    // See if this save contains any Building Control data.
+                    if (Singleton<SimulationManager>.instance.m_serializableDataStorage.TryGetValue(Serializer.DataID, out byte[] data))
+                    {
+                        // Yes - deserialize (making sure that all data is ready before returning instance reference).
+                        using (MemoryStream stream = new MemoryStream(data))
+                        {
+                            Logging.Message("found exsting savegame data");
+                            DataSerializer.Deserialize<DataContainer>(stream, DataSerializer.Mode.Memory);
+                        }
+                    }
+                }
+
+                return s_instance;
+            }
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether a placment mode override is in effect.

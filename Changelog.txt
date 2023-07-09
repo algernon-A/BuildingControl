@@ -1,3 +1,6 @@
+- Use custom deserialization timing to ensure saved settings are always ready when loading
+
+
 Version 1.1 -
 
 - Add full serialization of individual building settings

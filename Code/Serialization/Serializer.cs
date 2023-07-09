@@ -20,8 +20,10 @@ namespace BuildingControl
         /// </summary>
         internal const int CurrentDataVersion = 0;
 
-        // Unique data ID.
-        private readonly string dataID = "BuildingControl";
+        /// <summary>
+        /// Unique data ID for savegame data.
+        /// </summary>
+        internal const string DataID = "BuildingControl";
 
         /// <summary>
         /// Serializes data to the savegame.
@@ -37,7 +39,7 @@ namespace BuildingControl
                 DataSerializer.Serialize(stream, DataSerializer.Mode.Memory, CurrentDataVersion, new DataContainer());
 
                 // Write to savegame.
-                serializableDataManager.SaveData(dataID, stream.ToArray());
+                serializableDataManager.SaveData(DataID, stream.ToArray());
 
                 Logging.Message("wrote ", stream.Length);
             }
@@ -49,26 +51,7 @@ namespace BuildingControl
         /// </summary>
         public override void OnLoadData()
         {
-            Logging.Message("reading data from save file");
-            base.OnLoadData();
-
-            // Read data from savegame.
-            byte[] data = serializableDataManager.LoadData(dataID);
-
-            // Check to see if anything was read - start with trying original data ID.
-            if (data != null && data.Length != 0)
-            {
-                Logging.Message("found serialized data");
-
-                // Data was read - go ahead and deserialise.
-                using (MemoryStream stream = new MemoryStream(data))
-                {
-                    // Deserialise savegame settings.
-                    DataSerializer.Deserialize<DataContainer>(stream, DataSerializer.Mode.Memory);
-
-                    Logging.Message("read ", stream.Length);
-                }
-            }
+            // Nothing here - deserialization is called via BuildingData instance accessor, as default game deserialization happens too late.
         }
     }
 }
