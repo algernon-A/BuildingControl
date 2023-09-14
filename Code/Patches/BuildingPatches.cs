@@ -14,7 +14,7 @@ namespace BuildingControl.Patches
     using UnityEngine;
 
     /// <summary>
-    /// Harmomy patches for building instances to implement terrain and surface overrides.
+    /// Harmony patches for building instances to implement terrain and surface overrides.
     /// </summary>
     [HarmonyPatch]
     internal static class BuildingPatches
@@ -45,12 +45,14 @@ namespace BuildingControl.Patches
             FieldInfo m_flattenFullArea = AccessTools.Field(typeof(BuildingInfo), nameof(BuildingInfo.m_flattenFullArea));
             FieldInfo m_fullGravel = AccessTools.Field(typeof(BuildingInfo), nameof(BuildingInfo.m_fullGravel));
             FieldInfo m_fullPavement = AccessTools.Field(typeof(BuildingInfo), nameof(BuildingInfo.m_fullPavement));
+            FieldInfo m_cellSurfaces = AccessTools.Field(typeof(BuildingInfo), nameof(BuildingInfo.m_cellSurfaces));
 
             // Replacement methods.
             MethodInfo getFlattenTerrain = AccessTools.Method(typeof(BuildingPatches), nameof(GetFlattenTerrain));
             MethodInfo getFlattenFullArea = AccessTools.Method(typeof(BuildingPatches), nameof(GetFlattenFullArea));
             MethodInfo getFullGravel = AccessTools.Method(typeof(BuildingPatches), nameof(GetFullGravel));
             MethodInfo getFullPavement = AccessTools.Method(typeof(BuildingPatches), nameof(GetFullPavement));
+            MethodInfo getCellSurfaces = AccessTools.Method(typeof(BuildingPatches), nameof(GetCellSurfaces));
 
             // Iterate through all instructions.
             foreach (CodeInstruction instruction in instructions)
@@ -95,6 +97,17 @@ namespace BuildingControl.Patches
                     // In all target methods argument 1 is buildingID.
                     yield return new CodeInstruction(OpCodes.Ldarg_1);
                     yield return new CodeInstruction(OpCodes.Call, getFullPavement);
+
+                    // Skip original instruction.
+                    continue;
+                }
+                else if (instruction.LoadsField(m_cellSurfaces))
+                {
+                    Logging.Message("found m_cellSurfaces");
+
+                    // In all target methods argument 1 is buildingID.
+                    yield return new CodeInstruction(OpCodes.Ldarg_1);
+                    yield return new CodeInstruction(OpCodes.Call, getCellSurfaces);
 
                     // Skip original instruction.
                     continue;
@@ -185,6 +198,25 @@ namespace BuildingControl.Patches
                 case BuildingRecord.SurfaceTexture.None:
                 case BuildingRecord.SurfaceTexture.Gravel:
                     return false;
+            }
+        }
+
+        /// <summary>
+        /// Nullifies m_cellSurfaces given building ID if the mod's surface texture override is set to 'None'.
+        /// </summary>
+        /// <param name="buildingInfo"><see cref="BuildingInfo"/> prefab.</param>
+        /// <param name="buildingID">Building ID.</param>
+        /// <returns><see cref="BuildingInfo.m_cellSurfaces"/> replacement value.</returns>
+        private static TerrainModify.Surface[] GetCellSurfaces(BuildingInfo buildingInfo, ushort buildingID)
+        {
+            switch (BuildingData.Instance.GetSurfaceTexture(buildingID))
+            {
+                case BuildingRecord.SurfaceTexture.None:
+                    // If we're overriding texture to 'None', just return null.
+                    return null;
+                default:
+                    // Otherwise, return the original array.
+                    return buildingInfo.m_cellSurfaces;
             }
         }
     }
